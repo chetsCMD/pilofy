@@ -3,108 +3,109 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Pilofy — скоро</title>
+  <title>Pilot | Технические работы</title>
+  <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/690/690936.png" type="image/png" />
   <style>
-    * {
-      box-sizing: border-box;
-    }
-
     body {
       margin: 0;
       padding: 0;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: radial-gradient(circle at center, #1e1e1e 0%, #151515 100%);
       color: #f0f0f0;
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      height: 100vh;
       text-align: center;
+      height: 100vh;
       overflow: hidden;
-      background: linear-gradient(-45deg, #1e1e1e, #222, #2a2a2a, #1c1c1c);
-      background-size: 400% 400%;
-      animation: gradientBG 15s ease infinite;
     }
 
-    @keyframes gradientBG {
-      0% {
-        background-position: 0% 50%;
-      }
-      50% {
-        background-position: 100% 50%;
-      }
-      100% {
-        background-position: 0% 50%;
-      }
+    h1, h2, h3 {
+      margin: 0.5em 0;
     }
 
     h1 {
       font-size: 3em;
-      margin-bottom: 0.5em;
       color: #66d9ef;
-      text-shadow: 0 0 10px #66d9ef;
-      animation: fadeIn 2s ease-out;
+      text-shadow: 0 0 8px #66d9ef, 0 0 12px #66d9ef;
+      animation: pulse 3s ease-in-out infinite;
     }
 
     h2 {
       font-size: 1.5em;
-      color: #bbb;
-      margin-bottom: 1em;
-      animation: fadeIn 2s ease-out 0.3s;
+      color: #999;
     }
 
     h3 {
+      font-size: 1.2em;
       color: #66d9ef;
-      font-weight: 400;
-      animation: fadeIn 2s ease-out 0.6s;
+      margin-top: 2em;
+    }
+
+    .timer {
+      font-size: 1.5em;
+      color: #42c762;
+      margin-top: 0.3em;
+      animation: fadeIn 2s ease-in-out;
+    }
+
+    .container {
+      animation: fadeIn 1.5s ease-in-out;
+    }
+
+    @keyframes pulse {
+      0%, 100% {
+        text-shadow: 0 0 5px #66d9ef, 0 0 10px #66d9ef, 0 0 20px #66d9ef;
+      }
+      50% {
+        text-shadow: 0 0 10px #3a7bd5, 0 0 20px #3a7bd5, 0 0 40px #3a7bd5;
+      }
     }
 
     @keyframes fadeIn {
-      0% {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      100% {
-        opacity: 1;
-        transform: translateY(0);
-      }
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
     }
-
-    .button {
-      margin-top: 2em;
-      padding: 0.75em 2em;
-      background-color: transparent;
-      border: 2px solid #66d9ef;
-      color: #66d9ef;
-      border-radius: 10px;
-      cursor: pointer;
-      font-size: 1em;
-      transition: all 0.3s ease;
-    }
-
-    .button:hover {
-      background-color: #66d9ef;
-      color: #1e1e1e;
-      box-shadow: 0 0 10px #66d9ef;
-    }
-
   </style>
 </head>
 <body>
-  <h1>Pilofy</h1>
-  <h2>Технические работы</h2>
-  <h3>Скоро запустимся!</h3>
+  <div class="container">
+    <h1>Технические работы</h1>
+    <h2>Скоро запустимся</h2>
 
-  <button class="button" onclick="alert('Уведомления скоро будут доступны!')">
-    Уведомить о запуске
-  </button>
+    <h3>Сайт Pilofy.ru стартует через:</h3>
+    <div id="timer1" class="timer">Загрузка...</div>
+
+    <h3>Проект Pilot стартует через:</h3>
+    <div id="timer2" class="timer">Загрузка...</div>
+  </div>
 
   <script>
-    // Динамический заголовок
-    let visible = true;
+    function updateTimer(id, targetDate) {
+      const now = new Date().getTime();
+      const distance = targetDate - now;
+
+      if (distance < 0) {
+        document.getElementById(id).innerHTML = "Уже запущено!";
+        return;
+      }
+
+      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+      document.getElementById(id).innerHTML = 
+        `${days}д ${hours}ч ${minutes}м ${seconds}с`;
+    }
+
+    const launchDate1 = new Date("2025-04-21T03:00:00+03:00").getTime(); // сайт
+    const launchDate2 = new Date("2025-06-06T00:00:00+03:00").getTime(); // проект Pilot
+
     setInterval(() => {
-      document.title = visible ? "Pilofy — скоро..." : " ";
-      visible = !visible;
+      updateTimer("timer1", launchDate1);
+      updateTimer("timer2", launchDate2);
     }, 1000);
   </script>
 </body>

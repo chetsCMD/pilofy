@@ -1,93 +1,162 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Pilot | Технические работы</title>
-  <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/690/690936.png" type="image/png" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pilofy | Технические работы</title>
   <style>
-    body {
+    body, html {
       margin: 0;
       padding: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: radial-gradient(circle at center, #1e1e1e 0%, #151515 100%);
+      height: 100%;
+      background-color: #1e1e1e;
       color: #f0f0f0;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-      height: 100vh;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    /* Анимация нейронной сети */
+    .background {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
       overflow: hidden;
+      z-index: -1;
     }
 
-    h1, h2, h3 {
-      margin: 0.5em 0;
+    .dot {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: #66d9ef;
+      opacity: 0.8;
     }
 
+    .line {
+      position: absolute;
+      width: 2px;
+      background-color: rgba(102, 217, 239, 0.5);
+      transition: all 0.1s ease-out;
+    }
+
+    /* Текст на странице */
     h1 {
       font-size: 3em;
+      margin-top: 100px;
       color: #66d9ef;
-      text-shadow: 0 0 8px #66d9ef, 0 0 12px #66d9ef;
-      animation: pulse 3s ease-in-out infinite;
+      text-shadow: 0 0 5px #66d9ef, 0 0 10px #66d9ef;
     }
 
     h2 {
       font-size: 1.5em;
-      color: #999;
+      color: #888;
     }
 
     h3 {
       font-size: 1.2em;
       color: #66d9ef;
-      margin-top: 2em;
     }
 
+    .content {
+      text-align: center;
+      z-index: 1;
+    }
+
+    /* Стиль для таймеров */
     .timer {
-      font-size: 1.5em;
-      color: #42c762;
-      margin-top: 0.3em;
-      animation: fadeIn 2s ease-in-out;
-    }
-
-    .container {
-      animation: fadeIn 1.5s ease-in-out;
-    }
-
-    @keyframes pulse {
-      0%, 100% {
-        text-shadow: 0 0 5px #66d9ef, 0 0 10px #66d9ef, 0 0 20px #66d9ef;
-      }
-      50% {
-        text-shadow: 0 0 10px #3a7bd5, 0 0 20px #3a7bd5, 0 0 40px #3a7bd5;
-      }
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
+      font-size: 2em;
+      margin-top: 20px;
+      color: #66d9ef;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Технические работы</h1>
+  <!-- Основной контент -->
+  <div class="content">
+    <h1 class="glow">Технические работы</h1>
     <h2>Скоро запустимся</h2>
+    <h3 class="glow">Pilot</h3>
 
-    <h3>Сайт Pilofy.ru стартует через:</h3>
-    <div id="timer1" class="timer">Загрузка...</div>
-
-    <h3>Проект Pilot стартует через:</h3>
-    <div id="timer2" class="timer">Загрузка...</div>
+    <!-- Таймеры -->
+    <div class="timer" id="siteTimer"></div>
+    <div class="timer" id="projectTimer"></div>
   </div>
 
+  <!-- Анимация фона -->
+  <div class="background" id="background"></div>
+
   <script>
-    function updateTimer(id, targetDate) {
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    document.getElementById('background').appendChild(canvas);
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    let dots = [];
+    const maxDots = 50;
+    const maxLineLength = 150;
+
+    // Функция для генерации точек
+    function createDots() {
+      for (let i = 0; i < maxDots; i++) {
+        const x = Math.random() * canvas.width;
+        const y = Math.random() * canvas.height;
+        dots.push({ x, y });
+        const dot = document.createElement('div');
+        dot.classList.add('dot');
+        dot.style.left = `${x - 4}px`;
+        dot.style.top = `${y - 4}px`;
+        document.body.appendChild(dot);
+      }
+    }
+
+    // Функция для рисования линий между точками
+    function drawLines() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (let i = 0; i < dots.length; i++) {
+        for (let j = i + 1; j < dots.length; j++) {
+          const dx = dots[i].x - dots[j].x;
+          const dy = dots[i].y - dots[j].y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+
+          if (distance < maxLineLength) {
+            ctx.beginPath();
+            ctx.moveTo(dots[i].x, dots[i].y);
+            ctx.lineTo(dots[j].x, dots[j].y);
+            ctx.strokeStyle = 'rgba(102, 217, 239, 0.3)';
+            ctx.lineWidth = 1;
+            ctx.stroke();
+          }
+        }
+      }
+    }
+
+    // Обновление анимации
+    function animate() {
+      drawLines();
+      requestAnimationFrame(animate);
+    }
+
+    createDots();
+    animate();
+
+    window.addEventListener('resize', () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
+
+    // Таймер до запуска сайта
+    const siteLaunchDate = new Date("April 21, 2025 03:00:00").getTime();
+    const projectLaunchDate = new Date("June 6, 2025 00:00:00").getTime();
+
+    function updateTimer(targetDate, elementId) {
       const now = new Date().getTime();
       const distance = targetDate - now;
 
-      if (distance < 0) {
-        document.getElementById(id).innerHTML = "Уже запущено!";
+      if (distance <= 0) {
+        document.getElementById(elementId).innerHTML = "Запуск завершён!";
         return;
       }
 
@@ -96,17 +165,11 @@
       const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
       const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-      document.getElementById(id).innerHTML = 
-        `${days}д ${hours}ч ${minutes}м ${seconds}с`;
+      document.getElementById(elementId).innerHTML = `Ожидание: ${days}д ${hours}ч ${minutes}м ${seconds}с`;
     }
 
-    const launchDate1 = new Date("2025-04-21T03:00:00+03:00").getTime(); // сайт
-    const launchDate2 = new Date("2025-06-06T00:00:00+03:00").getTime(); // проект Pilot
-
-    setInterval(() => {
-      updateTimer("timer1", launchDate1);
-      updateTimer("timer2", launchDate2);
-    }, 1000);
+    setInterval(() => updateTimer(siteLaunchDate, "siteTimer"), 1000);
+    setInterval(() => updateTimer(projectLaunchDate, "projectTimer"), 1000);
   </script>
 </body>
 </html>

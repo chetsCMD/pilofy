@@ -1,14 +1,15 @@
-<!DOCTYPE html><html lang="ru">
+<!DOCTYPE html>
+<html lang="ru">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Pilofy</title>
+  <title>Pilofy — скоро</title>
   <style>
     body {
       margin: 0;
       padding: 0;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #1e1e1e;
+      background: radial-gradient(circle at center, #1e1e1e, #121212);
       color: #f0f0f0;
       display: flex;
       flex-direction: column;
@@ -16,26 +17,65 @@
       align-items: center;
       height: 100vh;
       text-align: center;
-    }h1 {
-  font-size: 3em;
-  margin-bottom: 0.5em;
-  color: #66d9ef;
-}
+      overflow: hidden;
+      animation: fadeIn 2s ease-in-out;
+    }
 
-h2 {
-  font-size: 1.5em;
-  color: #888;
-}
+    h1 {
+      font-size: 3em;
+      margin-bottom: 0.5em;
+      color: #66d9ef;
+    }
 
-.glow {
-  text-shadow: 0 0 5px #66d9ef, 0 0 10px #66d9ef, 0 0 20px #66d9ef;
-}
+    h2 {
+      font-size: 1.5em;
+      color: #888;
+    }
 
+    h3 {
+      margin-top: 1em;
+      font-weight: 400;
+      color: #66d9ef;
+    }
+
+    .glow {
+      text-shadow: 0 0 5px #66d9ef, 0 0 10px #66d9ef, 0 0 20px #66d9ef;
+    }
+
+    @keyframes fadeIn {
+      0% {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .stars {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: transparent url('https://media.giphy.com/media/3ov9jExd1QbdfKX9W4/giphy.gif') repeat;
+      opacity: 0.1;
+      z-index: -1;
+    }
   </style>
 </head>
 <body>
+  <div class="stars"></div>
   <h1 class="glow">Технические работы</h1>
   <h2>Скоро запустимся</h2>
   <h3 class="glow">Pilot</h3>
+
+  <script>
+    // Мигающий title
+    let visible = true;
+    setInterval(() => {
+      document.title = visible ? "Pilofy — скоро..." : " ";
+      visible = !visible;
+    }, 1000);
+  </script>
 </body>
 </html>

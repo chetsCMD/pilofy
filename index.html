@@ -204,7 +204,7 @@
 
     let dots = [];
     const maxDots = 50;
-    const maxLineLength = 150;
+    const maxLineLength = 500; // Увеличили максимальную длину линии
 
     // Функция для генерации точек
     function createDots() {
@@ -212,11 +212,6 @@
             const x = Math.random() * canvas.width;
             const y = Math.random() * canvas.height;
             dots.push({x, y});
-            const dot = document.createElement('div');
-            dot.classList.add('dot');
-            dot.style.left = `${x - 4}px`;
-            dot.style.top = `${y - 4}px`;
-            document.body.appendChild(dot);
         }
     }
 
@@ -243,11 +238,11 @@
 
     // Обновление анимации
     function animate() {
+        createDots(); // Обновляем точки при каждой анимации
         drawLines();
         requestAnimationFrame(animate);
     }
 
-    createDots();
     animate();
 
     window.addEventListener('resize', () => {

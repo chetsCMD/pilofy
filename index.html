@@ -8,12 +8,12 @@
         body, html {
             margin: 0;
             padding: 0;
-            height: auto; /* Allow content to expand */
+            height: auto;
             min-height: 100%;
             background-color: #1e1e1e;
             color: #f0f0f0;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            overflow-x: hidden; /* Prevent horizontal scroll */
+            overflow-x: hidden;
         }
 
         /* Анимация нейронной сети */
@@ -55,7 +55,7 @@
             text-align: center;
             z-index: 1;
             position: relative;
-            padding-bottom: 20px; /* Add some space below the timers */
+            padding-bottom: 20px;
         }
 
         /* Стиль для таймеров */
@@ -89,8 +89,8 @@
             align-items: center;
             width: 80%;
             margin: 20px auto;
-            position: relative; /* Ensure it's positioned correctly */
-            z-index: 1; /* Ensure it's above the canvas */
+            position: relative;
+            z-index: 1;
         }
 
         .project {
@@ -282,7 +282,7 @@
     }
 
     function animate() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear canvas before drawing
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
         drawLines();
         requestAnimationFrame(animate);
     }
@@ -293,7 +293,7 @@
     window.addEventListener('resize', () => {
         setCanvasSize();
         createDots();
-        animate(); // Restart animation on resize
+        animate();
     });
 
     // Timers for site and project launches

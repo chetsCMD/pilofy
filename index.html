@@ -12,33 +12,21 @@
             background-color: #1e1e1e;
             color: #f0f0f0;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden; /* Hide scrollbars */
         }
 
         /* Анимация нейронной сети */
         .background {
-            position: absolute;
+            position: fixed; /* Make it fixed */
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            overflow: hidden;
             z-index: -1;
         }
 
-        .dot {
-            position: absolute;
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background-color: #66d9ef;
-            opacity: 0.8;
-        }
-
-        .line {
-            position: absolute;
-            width: 2px;
-            background-color: rgba(102, 217, 239, 0.5);
-            transition: all 0.1s ease-out;
+        .background canvas {
+            display: block; /* Remove any extra spacing */
         }
 
         /* Текст на странице */
@@ -47,21 +35,25 @@
             margin-top: 100px;
             color: #66d9ef;
             text-shadow: 0 0 5px #66d9ef, 0 0 10px #66d9ef;
+            text-align: center; /* Center the text */
         }
 
         h2 {
             font-size: 1.5em;
             color: #888;
+            text-align: center; /* Center the text */
         }
 
         h3 {
             font-size: 1.2em;
             color: #66d9ef;
+            text-align: center; /* Center the text */
         }
 
         .content {
-            text-align: center;
+            position: relative;
             z-index: 1;
+            text-align: center;
         }
 
         /* Стиль для таймеров */
@@ -129,7 +121,9 @@
 </div>
 
 <!-- Анимация фона -->
-<div class="background" id="background"></div>
+<div class="background" id="background">
+    <canvas id="myCanvas"></canvas>
+</div>
 
 <!-- Секция проектов -->
 <div class="projects-container">
@@ -196,61 +190,113 @@
 </div>
 
 <script>
-    const canvas = document.createElement('canvas');
+    const canvas = document.getElementById('myCanvas');
     const ctx = canvas.getContext('2d');
-    document.getElementById('background').appendChild(canvas);
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+
+    function setCanvasSize() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+
+    setCanvasSize(); // Set initial size
 
     let dots = [];
-    const maxDots = 50;
-    const maxLineLength = 500; // Увеличили максимальную длину линии
+    const maxDots = 75; // Increased number of dots
+    const maxLineLength = 175; // Reduced maxLineLength
+    const minConnections = 1; // Minimum number of connections
+    const maxConnections = 2; // Maximum number of connections
 
-    // Функция для генерации точек
+    // Function to generate dots
     function createDots() {
+        dots = []; // Clear existing dots
         for (let i = 0; i < maxDots; i++) {
             const x = Math.random() * canvas.width;
             const y = Math.random() * canvas.height;
-            dots.push({x, y});
+            dots.push({
+                x: x,
+                y: y,
+                connections: 0 // Initialize connections count
+            });
         }
     }
 
-    // Функция для рисования линий между точками
+    // Function to draw lines between dots
     function drawLines() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        for (let i = 0; i < dots.length; i++) {
-            for (let j = i + 1; j < dots.length; j++) {
-                const dx = dots[i].x - dots[j].x;
-                const dy = dots[i].y - dots[j].y;
-                const distance = Math.sqrt(dx * dx + dy * dy);
 
-                if (distance < maxLineLength) {
+        for (let i = 0; i < dots.length; i++) {
+            dots[i].connections = 0; // Reset connections for each dot
+        }
+
+        for (let i = 0; i < dots.length; i++) {
+            let dot = dots[i];
+
+            // Sort dots by distance to current dot
+            let sortedDots = dots.map((d, index) => ({
+                dot: d,
+                index: index,
+                distance: Math.sqrt(Math.pow(dot.x - d.x, 2) + Math.pow(dot.y - d.y, 2))
+            })).sort((a, b) => a.distance - b.distance);
+
+            let connections = 0;
+            for (let j = 1; j < sortedDots.length && connections < maxConnections; j++) {
+                let otherDot = sortedDots[j].dot;
+                let distance = sortedDots[j].distance;
+
+                if (distance < maxLineLength && dot.connections < maxConnections && otherDot.connections < maxConnections) {
                     ctx.beginPath();
-                    ctx.moveTo(dots[i].x, dots[i].y);
-                    ctx.lineTo(dots[j].x, dots[j].y);
+                    ctx.moveTo(dot.x, dot.y);
+                    ctx.lineTo(otherDot.x, otherDot.y);
                     ctx.strokeStyle = 'rgba(102, 217, 239, 0.3)';
                     ctx.lineWidth = 1;
                     ctx.stroke();
+
+                    dot.connections++;
+                    otherDot.connections++;
+                    connections++;
+                }
+            }
+
+            // If a dot has fewer than the minimum connections, find the closest unconnected dots
+            if (dot.connections < minConnections) {
+                let k = 1;
+                while (dot.connections < minConnections && k < sortedDots.length) {
+                    let otherDot = sortedDots[k].dot;
+                    let distance = sortedDots[k].distance;
+
+                    if (otherDot.connections < maxConnections) {
+                        ctx.beginPath();
+                        ctx.moveTo(dot.x, dot.y);
+                        ctx.lineTo(otherDot.x, otherDot.y);
+                        ctx.strokeStyle = 'rgba(102, 217, 239, 0.3)';
+                        ctx.lineWidth = 1;
+                        ctx.stroke();
+
+                        dot.connections++;
+                        otherDot.connections++;
+                    }
+                    k++;
                 }
             }
         }
     }
 
-    // Обновление анимации
+    // Animation function
     function animate() {
-        createDots(); // Обновляем точки при каждой анимации
         drawLines();
         requestAnimationFrame(animate);
     }
 
-    animate();
+    createDots(); // Initial dot creation
+    animate(); // Start animation
 
+    // Handle window resizing
     window.addEventListener('resize', () => {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
+        setCanvasSize();
+        createDots(); // Recreate dots on resize
     });
 
-    // Таймеры для запуска сайтов и проектов
+    // Timers for site and project launches
     const siteLaunchDate = new Date("April 21, 2025 03:00:00").getTime();
     const projectLaunchDate = new Date("June 6, 2025 00:00:00").getTime();
 
@@ -275,7 +321,7 @@
     setInterval(() => updateTimer(projectLaunchDate, "projectTimer"), 1000);
 </script>
 <script>
-    // Таймер для EcoPilot
+    // Timer for EcoPilot
     const ecoPilotLaunchDate = new Date("April 19, 2025 06:00:00").getTime();
 
     function updateEcoPilotTimer() {

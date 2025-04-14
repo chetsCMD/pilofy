@@ -8,16 +8,17 @@
         body, html {
             margin: 0;
             padding: 0;
-            height: 100%;
+            height: auto; /* Allow content to expand */
+            min-height: 100%;
             background-color: #1e1e1e;
             color: #f0f0f0;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            overflow: hidden; /* Hide scrollbars */
+            overflow-x: hidden; /* Prevent horizontal scroll */
         }
 
         /* Анимация нейронной сети */
         .background {
-            position: fixed; /* Make it fixed */
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
@@ -25,8 +26,8 @@
             z-index: -1;
         }
 
-        .background canvas {
-            display: block; /* Remove any extra spacing */
+        canvas {
+            display: block;
         }
 
         /* Текст на странице */
@@ -35,25 +36,26 @@
             margin-top: 100px;
             color: #66d9ef;
             text-shadow: 0 0 5px #66d9ef, 0 0 10px #66d9ef;
-            text-align: center; /* Center the text */
+            text-align: center;
         }
 
         h2 {
             font-size: 1.5em;
             color: #888;
-            text-align: center; /* Center the text */
+            text-align: center;
         }
 
         h3 {
             font-size: 1.2em;
             color: #66d9ef;
-            text-align: center; /* Center the text */
+            text-align: center;
         }
 
         .content {
-            position: relative;
-            z-index: 1;
             text-align: center;
+            z-index: 1;
+            position: relative;
+            padding-bottom: 20px; /* Add some space below the timers */
         }
 
         /* Стиль для таймеров */
@@ -87,6 +89,8 @@
             align-items: center;
             width: 80%;
             margin: 20px auto;
+            position: relative; /* Ensure it's positioned correctly */
+            z-index: 1; /* Ensure it's above the canvas */
         }
 
         .project {
@@ -121,7 +125,7 @@
 </div>
 
 <!-- Анимация фона -->
-<div class="background" id="background">
+<div class="background">
     <canvas id="myCanvas"></canvas>
 </div>
 
@@ -198,40 +202,37 @@
         canvas.height = window.innerHeight;
     }
 
-    setCanvasSize(); // Set initial size
+    setCanvasSize();
 
     let dots = [];
-    const maxDots = 75; // Increased number of dots
-    const maxLineLength = 175; // Reduced maxLineLength
-    const minConnections = 1; // Minimum number of connections
-    const maxConnections = 2; // Maximum number of connections
+    const maxDots = 75;
+    const maxLineLength = 175;
+    const minConnections = 1;
+    const maxConnections = 2;
 
-    // Function to generate dots
     function createDots() {
-        dots = []; // Clear existing dots
+        dots = [];
         for (let i = 0; i < maxDots; i++) {
             const x = Math.random() * canvas.width;
             const y = Math.random() * canvas.height;
             dots.push({
                 x: x,
                 y: y,
-                connections: 0 // Initialize connections count
+                connections: 0
             });
         }
     }
 
-    // Function to draw lines between dots
     function drawLines() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         for (let i = 0; i < dots.length; i++) {
-            dots[i].connections = 0; // Reset connections for each dot
+            dots[i].connections = 0;
         }
 
         for (let i = 0; i < dots.length; i++) {
             let dot = dots[i];
 
-            // Sort dots by distance to current dot
             let sortedDots = dots.map((d, index) => ({
                 dot: d,
                 index: index,
@@ -257,7 +258,6 @@
                 }
             }
 
-            // If a dot has fewer than the minimum connections, find the closest unconnected dots
             if (dot.connections < minConnections) {
                 let k = 1;
                 while (dot.connections < minConnections && k < sortedDots.length) {
@@ -281,19 +281,19 @@
         }
     }
 
-    // Animation function
     function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear canvas before drawing
         drawLines();
         requestAnimationFrame(animate);
     }
 
-    createDots(); // Initial dot creation
-    animate(); // Start animation
+    createDots();
+    animate();
 
-    // Handle window resizing
     window.addEventListener('resize', () => {
         setCanvasSize();
-        createDots(); // Recreate dots on resize
+        createDots();
+        animate(); // Restart animation on resize
     });
 
     // Timers for site and project launches

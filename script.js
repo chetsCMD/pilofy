@@ -1,59 +1,58 @@
-const canvas = document.createElement('canvas');
-const ctx = canvas.getContext('2d');
-document.getElementById('background').appendChild(canvas);
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
-
-let dots = [];
-const maxDots = 100;  // Увеличим количество точек для лучшего эффекта
-const maxLineLength = 150;  // Максимальная длина соединений между нейронами
-
-// Функция для генерации точек
-function createDots() {
-    for (let i = 0; i < maxDots; i++) {
-        const x = Math.random() * canvas.width;
-        const y = Math.random() * canvas.height;
-        dots.push({ x, y });
-        const dot = document.createElement('div');
-        dot.classList.add('dot');
-        dot.style.left = `${x - 4}px`;
-        dot.style.top = `${y - 4}px`;
-        document.body.appendChild(dot);
-    }
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    background-color: #1e1e1e;
+    color: #f0f0f0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-// Функция для рисования линий между точками
-function drawLines() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);  // Очищаем холст перед рисованием
-    for (let i = 0; i < dots.length; i++) {
-        for (let j = i + 1; j < dots.length; j++) {
-            const dx = dots[i].x - dots[j].x;
-            const dy = dots[i].y - dots[j].y;
-            const distance = Math.sqrt(dx * dx + dy * dy);
-
-            if (distance < maxLineLength) {  // Рисуем линию только если расстояние между точками меньше максимальной длины
-                ctx.beginPath();
-                ctx.moveTo(dots[i].x, dots[i].y);
-                ctx.lineTo(dots[j].x, dots[j].y);
-                ctx.strokeStyle = 'rgba(102, 217, 239, 0.5)';
-                ctx.lineWidth = 1;
-                ctx.stroke();
-            }
-        }
-    }
+/* Анимация нейронной сети */
+.background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: -1;
 }
 
-// Обновление анимации
-function animate() {
-    drawLines();
-    requestAnimationFrame(animate);  // Бесконечный цикл для анимации
+.dot {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #66d9ef;
+    opacity: 0.8;
 }
 
-createDots();
-animate();
+.line {
+    position: absolute;
+    width: 2px;
+    background-color: rgba(102, 217, 239, 0.5);
+    transition: all 0.1s ease-out;
+}
 
-// Обновление размеров канваса при изменении окна
-window.addEventListener('resize', () => {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-});
+/* Текст на странице */
+h1 {
+    font-size: 3em;
+    margin-top: 100px;
+    color: #66d9ef;
+    text-shadow: 0 0 5px #66d9ef, 0 0 10px #66d9ef;
+}
+
+h2 {
+    font-size: 1.5em;
+    color: #888;
+}
+
+h3 {
+    font-size: 1.2em;
+    color: #66d9ef;
+}
+
+.content {
+    text-align: center;
+    z-index: 1;
+}

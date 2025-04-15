@@ -5,8 +5,8 @@ canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
 let dots = [];
-const maxDots = 50;  // Количество точек (нейронов)
-const maxLineLength = 500;  // Максимальная длина соединений между нейронами
+const maxDots = 100;  // Увеличим количество точек для лучшего эффекта
+const maxLineLength = 150;  // Максимальная длина соединений между нейронами
 
 // Функция для генерации точек
 function createDots() {
